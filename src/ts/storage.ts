@@ -53,7 +53,11 @@ export interface StorageData {
 		actionButtonSize: number,
 		actionButtonRightOffset: number,
 		actionButtonBottomOffset: number,
-		actionButtonAsJoystickMultiplier: number
+		actionButtonAsJoystickMultiplier: number,
+
+		// April fools variations
+		april2023: boolean,
+		alwaysWeeb: boolean,
 	},
 	bestTimes: Record<string, BestTimes>,
 	/** Used for the name entry in the post-game screen. */
@@ -132,7 +136,10 @@ const DEFAULT_STORAGE_DATA: StorageData = {
 		actionButtonSize: 120,
 		actionButtonRightOffset: 30,
 		actionButtonBottomOffset: 30,
-		actionButtonAsJoystickMultiplier: 1.5
+		actionButtonAsJoystickMultiplier: 1.5,
+
+		april2023: true,
+		alwaysWeeb: true,
 	},
 	bestTimes: {},
 	lastUsedName: '',

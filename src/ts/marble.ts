@@ -27,7 +27,7 @@ import { BlendingType } from "./rendering/renderer";
 const DEFAULT_RADIUS = 0.2;
 const ULTRA_RADIUS = 0.3;
 const MEGA_MARBLE_RADIUS = 0.6666;
-export const MARBLE_ROLL_FORCE = 40 || 40;
+export let MARBLE_ROLL_FORCE = 40 || 40;
 const TELEPORT_FADE_DURATION = 500;
 
 export const bounceParticleOptions: ParticleEmitterOptions = {
@@ -148,6 +148,13 @@ export class Marble {
 		this.group = new Group();
 		this.innerGroup = new Group();
 		this.group.add(this.innerGroup);
+
+		if (StorageManager.data.settings.april2023) {
+			MARBLE_ROLL_FORCE = 100;
+			this.jumpImpulse = 10;
+		} else {
+			MARBLE_ROLL_FORCE = 40;
+		}
 
 		if (this.level.mission.misFile.marbleAttributes["jumpImpulse"] !== undefined)
 			this.jumpImpulse = MisParser.parseNumber(this.level.mission.misFile.marbleAttributes["jumpImpulse"]);
@@ -398,12 +405,14 @@ export class Marble {
 			angVel.addScaledVector(surfaceRotationAxis, dot3);
 			angVel.addScaledVector(direction, dot2);
 
-			if (angVel.length() > 300 * this.speedFac) angVel.multiplyScalar(300 * this.speedFac / angVel.length()); // Absolute max angular speed
+			if (!StorageManager.data.settings.april2023) {
+				if (angVel.length() > 300 * this.speedFac) angVel.multiplyScalar(300 * this.speedFac / angVel.length()); // Absolute max angular speed
 
-			if (dot2 + movementRotationAxis.length() > 12 * Math.PI*2 * inputStrength / contactNormalUpDot * this.speedFac) {
-				// Cap the rolling velocity
-				let newLength = Math.max(0, 12 * Math.PI*2 * inputStrength / contactNormalUpDot * this.speedFac - dot2);
-				movementRotationAxis.normalize().multiplyScalar(newLength);
+				if (dot2 + movementRotationAxis.length() > 12 * Math.PI*2 * inputStrength / contactNormalUpDot * this.speedFac) {
+					// Cap the rolling velocity
+					let newLength = Math.max(0, 12 * Math.PI*2 * inputStrength / contactNormalUpDot * this.speedFac - dot2);
+					movementRotationAxis.normalize().multiplyScalar(newLength);
+				}
 			}
 		} else {
 			// Handle airborne movement
@@ -414,6 +423,8 @@ export class Marble {
 
 			let airMovementVector = movementVec.clone();
 			let airVelocity = (time.currentAttemptTime - this.helicopterEnableTime) < 5000 ? 5 : 3.2; // Change air velocity for the helicopter
+			if (StorageManager.data.settings.april2023)
+				airVelocity *= 1.5;
 			if (this.level.finishTime) airVelocity = 0;
 			airMovementVector.multiplyScalar(airVelocity * dt);
 			//this.body.addLinearVelocity(airMovementVector);
@@ -426,7 +437,8 @@ export class Marble {
 
 		movementRotationAxis.multiplyScalar(this.speedFac);
 		// Apply angular acceleration, but make sure the angular velocity doesn't exceed some maximum
-		Util.addToVectorCapped(this.body.angularVelocity, movementRotationAxis, 120 * this.speedFac);
+		const angVelCap = StorageManager.data.settings.april2023 ? 12000 * this.speedFac : 120 * this.speedFac;
+		Util.addToVectorCapped(this.body.angularVelocity, movementRotationAxis, angVelCap);
 
 		if (this.level.finishTime) this.body.linearVelocity.multiplyScalar(0.9);
 
@@ -464,11 +476,12 @@ export class Marble {
 
 			let angVel = this.body.angularVelocity;
 			// Cap the angular velocity so it doesn't go haywire
-			if (angVel.length() > 60) angVel.normalize().multiplyScalar(60);
+			const angVelCap = StorageManager.data.settings.april2023 ? 100 : 60;
+			if (angVel.length() > angVelCap) angVel.normalize().multiplyScalar(angVelCap);
 
 			this.shape.friction = 0;
 		} else {
-			this.shape.friction = 1;
+			this.shape.friction = StorageManager.data.settings.april2023 ? 1000 : 1;
 		}
 	}
 
@@ -605,7 +618,8 @@ export class Marble {
 			this.superBounceSound.play();
 		}
 
-		if (time.currentAttemptTime - this.helicopterEnableTime < 5000) {
+		const helicopterEnableDuration = StorageManager.data.settings.april2023 ? 10000 : 5000;
+		if (time.currentAttemptTime - this.helicopterEnableTime < helicopterEnableDuration) {
 			// Show the helicopter
 			this.helicopter.setOpacity(1);
 			this.helicopter.setTransform(new Vector3(0, 0, this.radius - DEFAULT_RADIUS).applyQuaternion(this.level.newOrientationQuat), this.level.newOrientationQuat, new Vector3(1, 1, 1));

@@ -6,6 +6,8 @@ import { StorageData, StorageManager } from "../storage";
 import { Util } from "../util";
 import { SCALING_RATIO } from "./misc";
 import { buttonToDisplayNameMbg, buttonToDisplayNameMbp, OptionsScreen } from "./options";
+import { setSpecialForces } from "../interior";
+import { superSpeedParticleOptions } from "../shapes/super_speed";
 
 const SLIDER_KNOB_LEFT = 217;
 const SLIDER_KNOB_RIGHT = 344;
@@ -15,8 +17,10 @@ export class MbpOptionsScreen extends OptionsScreen {
 	applyButton = document.querySelector('#mbp-options-apply') as HTMLImageElement;
 	generalButton = document.querySelector('#mbp-options-general') as HTMLImageElement;
 	hotkeysButton = document.querySelector('#mbp-options-hotkeys') as HTMLImageElement;
+	aprilButton = document.querySelector('#mbp-options-april') as HTMLImageElement;
 	generalContainer = document.querySelector('#mbp-options-general-container') as HTMLDivElement;
 	hotkeysContainer = document.querySelector('#mbp-options-hotkeys-container') as HTMLDivElement;
+	aprilContainer = document.querySelector('#mbp-options-april-container') as HTMLDivElement;
 
 	/** Array of functions that cause each option element to be refreshed. */
 	updateFuncs: (() => void)[] = [];
@@ -45,22 +49,41 @@ export class MbpOptionsScreen extends OptionsScreen {
 		this.menu.setupButton(this.generalButton, 'options/general', () => {
 			this.generalContainer.classList.remove('hidden');
 			this.hotkeysContainer.classList.add('hidden');
+			this.aprilContainer.classList.add('hidden');
 
 			// Lock the one button in place
 			this.generalButton.src = this.generalButton.src.slice(0, -5) + 'd.png';
 			this.generalButton.setAttribute('data-locked', '');
 			this.hotkeysButton.src = this.hotkeysButton.src.slice(0, -5) + 'n.png';
 			this.hotkeysButton.removeAttribute('data-locked');
+			this.aprilButton.src = this.aprilButton.src.slice(0, -5) + 'n.png';
+			this.aprilButton.removeAttribute('data-locked');
 		}, undefined, undefined, false);
 		this.menu.setupButton(this.hotkeysButton, 'options/hotkeys', () => {
 			this.generalContainer.classList.add('hidden');
 			this.hotkeysContainer.classList.remove('hidden');
+			this.aprilContainer.classList.add('hidden');
 
 			// Lock the one button in place
-			this.hotkeysButton.src = this.hotkeysButton.src.slice(0, -5) + 'd.png';
-			this.hotkeysButton.setAttribute('data-locked', '');
 			this.generalButton.src = this.generalButton.src.slice(0, -5) + 'n.png';
 			this.generalButton.removeAttribute('data-locked');
+			this.hotkeysButton.src = this.hotkeysButton.src.slice(0, -5) + 'd.png';
+			this.hotkeysButton.setAttribute('data-locked', '');
+			this.aprilButton.src = this.aprilButton.src.slice(0, -5) + 'n.png';
+			this.aprilButton.removeAttribute('data-locked');
+		}, undefined, undefined, false);
+		this.menu.setupButton(this.aprilButton, 'options/april', () => {
+			this.generalContainer.classList.add('hidden');
+			this.hotkeysContainer.classList.add('hidden');
+			this.aprilContainer.classList.remove('hidden');
+
+			// Lock the one button in place
+			this.generalButton.src = this.generalButton.src.slice(0, -5) + 'n.png';
+			this.generalButton.removeAttribute('data-locked');
+			this.hotkeysButton.src = this.hotkeysButton.src.slice(0, -5) + 'n.png';
+			this.hotkeysButton.removeAttribute('data-locked');
+			this.aprilButton.src = this.aprilButton.src.slice(0, -5) + 'd.png';
+			this.aprilButton.setAttribute('data-locked', '');
 		}, undefined, undefined, false);
 		this.generalButton.click();
 
@@ -176,6 +199,25 @@ export class MbpOptionsScreen extends OptionsScreen {
 		this.addHotkey(this.hotkeysContainer, 'freeLook');
 		this.addHotkey(this.hotkeysContainer, 'restart');
 		this.addHotkey(this.hotkeysContainer, 'blast');
+
+		/* April Fools */
+
+		this.addHeading(this.aprilContainer, 'April Fools 2023');
+
+		this.addDropdown(this.aprilContainer, 'april2023', 'April 2023 Physics', ['Disabled', 'Enabled'], true, () => {
+			setSpecialForces({
+				"floor_bounce": StorageManager.data.settings.april2023 ? 20 : 15
+			});
+			superSpeedParticleOptions.ejectionPeriod = StorageManager.data.settings.april2023 ? 1 : 5;
+		}, true);
+		this.addDropdown(this.aprilContainer, 'alwaysWeeb', 'Always Weeb', ['Disabled', 'Enabled'], true, () => {
+			location.reload();
+		});
+
+		//this.addHeading(this.aprilContainer, 'April Fools 2024');
+
+		//this.addDropdown(this.aprilContainer, 'april2024', 'April 2024 Physics', ['Disabled', 'Enabled'], true, null, true);
+		//this.addDropdown(this.aprilContainer, 'bitcrush', 'Bitcrush', ['Disabled', 'Enabled'], true);
 
 		// Preload dropdown images
 		await ResourceManager.loadImages(['small', 'medium', 'large', 'xlarge'].map(x => './assets/ui_mbp/options/dropdown-' + x + '.png'));

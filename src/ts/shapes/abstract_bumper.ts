@@ -2,6 +2,7 @@ import { Shape } from "../shape";
 import { Util } from "../util";
 import { TimeState } from "../level";
 import { Collision } from "../physics/collision";
+import { StorageManager } from "../storage";
 
 /** A bumper is a shape which knocks the marble away on contact. */
 export abstract class AbstractBumper extends Shape {
@@ -23,7 +24,8 @@ export abstract class AbstractBumper extends Shape {
 		let marble = this.level.marble;
 
 		// Set the velocity along the contact normal, but make sure it's capped
-		marble.setLinearVelocityInDirection(collision.normal, 15, false);
+		const mag = StorageManager.data.settings.april2023 ? 30 : 15;
+		marble.setLinearVelocityInDirection(collision.normal, mag, false);
 		marble.slidingTimeout = 2; // Make sure we don't slide on the bumper after bouncing off it
 
 		this.level.replay.recordMarbleContact(this);

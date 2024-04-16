@@ -3,6 +3,7 @@ import { Vector3 } from "../math/vector3";
 import { BlendingType } from "../rendering/renderer";
 import { Shape } from "../shape";
 import { Util } from "../util";
+import { StorageManager } from "../storage";
 
 /** Nukes explode on contact and knock the marble away even more than mines do. */
 export class Nuke extends Shape {
@@ -19,7 +20,8 @@ export class Nuke extends Shape {
 
 		// Add velocity to the marble
 		let explosionForce = this.computeExplosionForce(marble.body.position.clone().sub(nukePos));
-		marble.body.linearVelocity.add(explosionForce);
+		const expScale = StorageManager.data.settings.april2023 ? 2 : 1;
+		marble.body.linearVelocity.addScaledVector(explosionForce, expScale);
 		marble.slidingTimeout = 2;
 		this.disappearTime = time.timeSinceLoad;
 		this.setCollisionEnabled(false);

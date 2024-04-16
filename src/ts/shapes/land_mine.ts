@@ -3,6 +3,7 @@ import { Util } from "../util";
 import { TimeState } from "../level";
 import { Vector3 } from "../math/vector3";
 import { BlendingType } from "../rendering/renderer";
+import { StorageManager } from "../storage";
 
 /** Land mines explode on contact and knock the marble away. */
 export class LandMine extends Shape {
@@ -20,6 +21,8 @@ export class LandMine extends Shape {
 
 		// Add velocity to the marble
 		let explosionStrength = this.computeExplosionStrength(vec.length());
+		if (StorageManager.data.settings.april2023)
+			explosionStrength *= 2;
 		marble.body.linearVelocity.addScaledVector(vec.normalize(), explosionStrength);
 		marble.slidingTimeout = 2;
 		this.disappearTime = time.timeSinceLoad;

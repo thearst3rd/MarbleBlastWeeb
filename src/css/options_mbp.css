@@ -27,21 +27,28 @@
 	position: absolute;
 	display: block;
 	top: 20px;
-	left: 100px;
+	left: 64px;
 }
 
 #mbp-options-hotkeys {
 	position: absolute;
 	display: block;
 	top: 20px;
-	left: 326px;
+	left: 238px;
+}
+
+#mbp-options-april {
+	position: absolute;
+	display: block;
+	top: 20px;
+	left: 412px;
 }
 
 #mbp-options-online {
 	position: absolute;
 	display: block;
 	top: 20px;
-	left: 546px;
+	left: 586px;
 }
 
 /* This wrapper exists to prevent varying scrollbar widths from messing up the flexbox wrapping. */

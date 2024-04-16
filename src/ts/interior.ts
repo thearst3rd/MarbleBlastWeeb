@@ -56,10 +56,15 @@ const specialResistutionFactor: Record<string, number> = {
 	"mmg_ice": 0.95
 	//"floor_bounce": 0.0
 };
-const specialForces: Record<string, number> = {
+let specialForces: Record<string, number> = {
 	"floor_bounce": 15
 };
-const specialMaterials = new Set([...Object.keys(specialFrictionFactor), ...Object.keys(specialResistutionFactor), ...Object.keys(specialForces)]);
+let specialMaterials = new Set([...Object.keys(specialFrictionFactor), ...Object.keys(specialResistutionFactor), ...Object.keys(specialForces)]);
+
+export function setSpecialForces(newSpecialForces: Record<string, number>) {
+	specialForces = newSpecialForces;
+	specialMaterials = new Set([...Object.keys(specialFrictionFactor), ...Object.keys(specialResistutionFactor), ...Object.keys(specialForces)]);
+}
 
 /** Creates a material with an additional normal map. */
 const createNormalMapMaterial = async (interior: Interior, baseTexture: string, normalTexture: string) => {

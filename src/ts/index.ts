@@ -8,6 +8,8 @@ import { MissionLibrary } from './mission_library';
 import { state } from './state';
 import { setMenu } from './ui/menu_setter';
 import { initMainRenderer } from './ui/misc';
+import { setSpecialForces } from "./interior";
+import { superSpeedParticleOptions } from "./shapes/super_speed";
 
 const loadingMessage = document.querySelector('#loading-message') as HTMLDivElement;
 const loadingDetail = document.querySelector('#loading-detail') as HTMLDivElement;
@@ -16,6 +18,14 @@ const startGameDialog = document.querySelector('#start-game-dialog') as HTMLDivE
 const init = async () => {
 	await Util.init();
 	await StorageManager.init();
+	if (StorageManager.data.settings.alwaysWeeb)
+		Util.isWeeb = true;
+	if (StorageManager.data.settings.april2023) {
+		setSpecialForces({
+			"floor_bounce": 20
+		});
+		superSpeedParticleOptions.ejectionPeriod = 1;
+	}
 	await ResourceManager.init();
 	initMainRenderer();
 

@@ -726,6 +726,10 @@ export class Level extends Scheduler {
 		if (shapeScale.y === 0) shapeScale.y = 0.0001;
 		if (shapeScale.z === 0) shapeScale.z = 0.0001;
 
+		if (StorageManager.data.settings.april2023) {
+			if (shape instanceof Gem) shapeScale.multiplyScalar(4);
+		}
+
 		shape.setTransform(shapePosition, shapeRotation, shapeScale);
 
 		this.scene.add(shape.group);

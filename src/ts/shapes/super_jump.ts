@@ -2,6 +2,7 @@ import { PowerUp } from "./power_up";
 import { state } from "../state";
 import { Vector3 } from "../math/vector3";
 import { BlendingType } from "../rendering/renderer";
+import { StorageManager } from "../storage";
 
 /** Gives the marble an upwards boost. */
 export class SuperJump extends PowerUp {
@@ -15,7 +16,8 @@ export class SuperJump extends PowerUp {
 
 	use() {
 		let marble = this.level.marble;
-		marble.body.linearVelocity.addScaledVector(this.level.currentUp, 20); // Simply add to vertical velocity
+		const scale = StorageManager.data.settings.april2023 ? 40 : 20;
+		marble.body.linearVelocity.addScaledVector(this.level.currentUp, scale); // Simply add to vertical velocity
 
 		this.level.audio.play(this.sounds[1]);
 		this.level.particles.createEmitter(superJumpParticleOptions, null, () => marble.body.position.clone());

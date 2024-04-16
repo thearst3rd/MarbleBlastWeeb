@@ -6,6 +6,7 @@ import { state } from "../state";
 import { Util } from "../util";
 import { DestinationTrigger } from "./destination_trigger";
 import { Trigger } from "./trigger";
+import { StorageManager } from "../storage";
 
 /** A teleport trigger teleports the marble to a specified destination after some time of being inside it. */
 export class TeleportTrigger extends Trigger {
@@ -18,6 +19,9 @@ export class TeleportTrigger extends Trigger {
 
 	constructor(element: MissionElementTrigger, level: Level) {
 		super(element, level);
+
+		if (StorageManager.data.settings.april2023)
+			this.delay = 200;
 
 		if (element.delay) this.delay = MisParser.parseNumber(element.delay);
 	}
