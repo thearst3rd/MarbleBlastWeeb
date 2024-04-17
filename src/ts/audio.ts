@@ -15,6 +15,7 @@ export class AudioManager {
 	masterGain: GainNode;
 	soundGain: GainNode;
 	musicGain: GainNode;
+	crusher: BitCrusher;
 
 	assetPath: string;
 	/** Stores a list of all currently playing audio sources. */
@@ -45,9 +46,13 @@ export class AudioManager {
 		this.masterGain = this.context.createGain();
 		this.masterGain.gain.value = 1;
 
-		let crusher = new BitCrusher(this.context);
-		this.masterGain.connect(crusher.node);
-		crusher.connect(this.context.destination);
+		this.crusher = new BitCrusher(this.context);
+		if (StorageManager.data.settings.bitcrush) {
+			this.masterGain.connect(this.crusher.node);
+			this.crusher.connect(this.context.destination);
+		} else {
+			this.masterGain.connect(this.context.destination);
+		}
 
 		this.soundGain = this.context.createGain();
 		this.soundGain.gain.value = 0; // These values will be overwritten by the options anyway
@@ -237,6 +242,18 @@ export class AudioManager {
 			source.gainFactor = Math.min(1 / receivedVolume, 1);
 		}
 	}
+
+	enableBitCrusher(enabled: boolean) {
+		if (enabled) {
+			this.masterGain.disconnect();
+			this.masterGain.connect(this.crusher.node);
+			this.crusher.connect(this.context.destination);
+		} else {
+			this.crusher.disconnect();
+			this.masterGain.disconnect();
+			this.masterGain.connect(this.context.destination);
+		}
+	}
 }
 
 /** A small wrapper around audio nodes that are used to play a sound. */
@@ -403,10 +420,7 @@ class BitCrusher {
 						this.lastSample = inputData[sample];
 					}
 					// Write the lastSample to the output
-					if (StorageManager.data.settings.bitcrush)
-						outputData[sample] = this.lastSample;
-					else
-						outputData[sample] = inputData[sample];
+					outputData[sample] = this.lastSample;
 				}
 			}
 		};
