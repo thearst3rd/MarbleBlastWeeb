@@ -58,6 +58,8 @@ export interface StorageData {
 		// April fools variations
 		april2023: boolean,
 		alwaysWeeb: boolean,
+		april2024: boolean,
+		bitcrush: boolean,
 	},
 	bestTimes: Record<string, BestTimes>,
 	/** Used for the name entry in the post-game screen. */
@@ -140,6 +142,8 @@ const DEFAULT_STORAGE_DATA: StorageData = {
 
 		april2023: true,
 		alwaysWeeb: true,
+		april2024: true,
+		bitcrush: true,
 	},
 	bestTimes: {},
 	lastUsedName: '',

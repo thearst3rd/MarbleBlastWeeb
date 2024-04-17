@@ -38,6 +38,8 @@ uniform vec3 directionalLightColor;
 uniform vec3 directionalLightDirection;
 uniform mediump sampler2D directionalLightShadowMap;
 
+uniform bool bitcrush;
+
 #if defined(LOG_DEPTH_BUF) && defined(IS_WEBGL1)
 	#extension GL_EXT_frag_depth : enable // For some reason, the extension needs to be enabled in-shader
 #endif
@@ -81,7 +83,7 @@ float getShadowIntensity(sampler2D map, vec4 shadowPosition, int mapSize) {
 	bool inBounds =
 		min(projectedTexcoord.x, min(projectedTexcoord.y, projectedTexcoord.z)) > 0.0 &&
 		max(projectedTexcoord.x, max(projectedTexcoord.y, projectedTexcoord.z)) < 1.0;
-	
+
 	if (!inBounds) return 0.0; // If not, say there's no shadow
 
 	float mapSizeF = float(mapSize);
@@ -109,7 +111,7 @@ float fresnel(vec3 direction, vec3 normal, bool invert) {
 	float cosine = dot(halfDirection, nDirection);
 	float product = max(cosine, 0.0);
 	float factor = invert ? 1.0 - pow(product, exponent) : pow(product, exponent);
-	
+
 	return factor;
 }
 
@@ -128,7 +130,7 @@ void main() {
 		bool hasDirectionalLight = dot(directionalLightDirection, directionalLightDirection) > 0.0;
 		float intensity = getShadowIntensity(directionalLightShadowMap, vShadowPosition, 250);
 		if (!hasDirectionalLight) intensity = 0.0;
-		
+
 		gl_FragColor = vec4(vec3(0.0), intensity * 0.25); // Note that this intensity differs from the one used in the normal shader path. That's because with a separate shadow material, it's actually difficult to figure out how dark the shadow should be - so whatever value we picked here just looked the least odd.
 	#else
 		vec4 diffuse = vec4(1.0);
@@ -204,7 +206,7 @@ void main() {
 
 				addedLight *= mix(1.0, 0.666, intensity);
 			#endif
-			
+
 			incomingLight += addedLight;
 
 			#ifdef USE_SPECULAR
@@ -243,7 +245,7 @@ void main() {
 
 			vec4 sampled = sampleCubeTexture(envMap, reflectionRay);
 			sampled.a *= vOpacity;
-			
+
 			shaded = mix(shaded, sampled, fac * reflectivity);
 		#endif
 
@@ -280,8 +282,17 @@ void main() {
 			}
 		#endif
 		gl_FragColor = shaded;
+
 		#ifdef USE_PREMULTIPLIED_ALPHA
 			gl_FragColor.rgb *= gl_FragColor.a;
 		#endif
 	#endif
+
+	if (bitcrush) {
+		// Apply bit reduction
+		float bitDepth = 8.0;
+		gl_FragColor.r = floor(gl_FragColor.r * bitDepth + 0.5) / bitDepth;
+		gl_FragColor.g = floor(gl_FragColor.g * bitDepth + 0.5) / bitDepth;
+		gl_FragColor.b = floor(gl_FragColor.b * bitDepth + 0.5) / bitDepth;
+	}
 }

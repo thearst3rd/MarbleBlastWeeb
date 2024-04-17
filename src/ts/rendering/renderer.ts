@@ -7,6 +7,7 @@ import particleFrag from './shaders/particle_frag.glsl';
 import { ParticleManager } from "../particles";
 import { ResourceManager } from "../resources";
 import { OrthographicCamera, PerspectiveCamera } from "./camera";
+import { StorageManager } from "../storage";
 
 /** Wrapper around a framebuffer to bundle extra metadata with it. */
 interface FramebufferInfo {
@@ -204,6 +205,8 @@ export class Renderer {
 			gl.uniform1i(program.getUniformLocation('noiseMap'), 5);
 
 			gl.uniform1i(program.getUniformLocation('debugMode'), Number(this.debugMode));
+
+			gl.uniform1i(program.getUniformLocation('bitcrush'), Number(StorageManager.data.settings.bitcrush));
 		}
 
 		// First, we draw all opaque objects
@@ -314,6 +317,8 @@ export class Renderer {
 			gl.uniform4fv(program.getUniformLocation('times'), group.uniforms.times);
 			gl.uniform4fv(program.getUniformLocation('sizes'), group.uniforms.sizes);
 			gl.uniformMatrix4fv(program.getUniformLocation('colors'), false, group.uniforms.colors);
+
+			gl.uniform1i(program.getUniformLocation('bitcrush'), Number(StorageManager.data.settings.bitcrush));
 
 			program.bindVertexBuffer(group.vertexBuffer);
 			gl.drawElements(gl.TRIANGLES, 6 * group.particles.length, gl.UNSIGNED_INT, 0);

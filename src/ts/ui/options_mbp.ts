@@ -214,10 +214,10 @@ export class MbpOptionsScreen extends OptionsScreen {
 			location.reload();
 		});
 
-		//this.addHeading(this.aprilContainer, 'April Fools 2024');
+		this.addHeading(this.aprilContainer, 'April Fools 2024');
 
-		//this.addDropdown(this.aprilContainer, 'april2024', 'April 2024 Physics', ['Disabled', 'Enabled'], true, null, true);
-		//this.addDropdown(this.aprilContainer, 'bitcrush', 'Bitcrush', ['Disabled', 'Enabled'], true);
+		this.addDropdown(this.aprilContainer, 'april2024', 'April 2024 Physics', ['Disabled', 'Enabled'], true, null, true);
+		this.addDropdown(this.aprilContainer, 'bitcrush', 'Bitcrush', ['Disabled', 'Enabled'], true);
 
 		// Preload dropdown images
 		await ResourceManager.loadImages(['small', 'medium', 'large', 'xlarge'].map(x => './assets/ui_mbp/options/dropdown-' + x + '.png'));
