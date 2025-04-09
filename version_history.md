@@ -1,5 +1,24 @@
 # Version History
 
+## 2.6.14
+This update reverts the 2025 April Fools' changes. Thanks for grinding!
+
+## 2.6.13
+Once again, Marble Blast Web is more platformer than ever - even more than last time! These are the mechanics:
+- **Dashing:** While you're in the air, you can dash once in the direction you're looking by clicking. Dashing overrides your velocity entirely, so it's perfect for performing tight curves.
+- **Air hopping:** While you're in the air, you can now jump an additional three times. Jumping completely cancels any downward motion. Air hops are slightly buffed compared to last time.
+- **Removed some bits:** To support the faster gameplay, video and audio now use *even less* bits. This was *definitely* done for performance reasons. The audio is especially crunchy this time around.
+
+## 2.6.12
+- Fixed asset resolution logic for custom shapes
+
+## 2.6.11
+- Fixed the Marbleland leaderboard endpoint for non-MBG levels
+
+## 2.6.10
+- Added tighter integration with Marbleland: You can now launch Marble Blast Web directly from Marbleland.
+- Fixed a bug where MBU replays could be launched from the MBG UI
+
 ## 2.6.9
 This update reverts the 2024 April Fools' changes. Thanks for grinding it out!
 
