@@ -225,7 +225,7 @@ const sendNewScores = (res: http.ServerResponse, timestamp: number) => {
 	}
 
 	// Also get the timestamp of the score with the highest timestamp
-	let latestTimestamp: number = shared.getLatestTimestampStatement.pluck().get();
+	let latestTimestamp: number = shared.getLatestTimestampStatement.pluck().get() as number;
 	if (!latestTimestamp) latestTimestamp = 0;
 
 	let stringified = JSON.stringify({
